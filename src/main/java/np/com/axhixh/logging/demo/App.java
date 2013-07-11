@@ -11,55 +11,60 @@ import org.apache.log4j.PatternLayout;
  */
 public class App {
 
+    private Logger logger;
+    
+    App(Logger logger) {
+        this.logger = logger;
+        logger.info("Demo to Show Exception Logging");
+    }
+    
     public static void main(String[] args) {
         BasicConfigurator.configure(new ConsoleAppender(new PatternLayout(), "System.out"));
 
-        Logger logger = Logger.getLogger(App.class);
-        logger.info("Logging Demo");
-
-        new App().demo(logger);
+        new App(Logger.getLogger(App.class)).demo();
     }
 
-    private void demo(Logger logger) {
-        demoException(logger);
-        demoDoubleLogging(logger);
-        demoExceptionWithCause(logger);
-        demoExceptionLostStack(logger);
-        demoReplacingStack(logger);
+    private void demo() {
+        demoException();
+        demoDoubleLogging();
+        demoExceptionLostStack();
+        demoExceptionWithCause();
+        demoReplacingStack();
     }
 
-    private String banner(String message) {
-        return "\n\n=================== " + message + " ====================";
+    private void banner(String message) {
+        logger.info("\n\n=================== " + message + " ====================");
     }
-    private void demoException(Logger logger) {
+    
+    private void demoException() {
+        banner("logging of simple exception");
         try {
-            logger.warn(banner("logging of simple exception"));
             throwsException();
         } catch (Exception e) {
             logger.info("demo of simple exception.", e);
         }
     }
 
-    private void demoDoubleLogging(Logger logger) {
-        logger.warn(banner("double logging of exception"));
+    private void demoDoubleLogging() {
+        banner("double logging of exception");
         try {
-            throwsAfterLogging(logger);
+            throwsAfterLogging();
         } catch (Exception e) {
             logger.info("double logging", e);
         }
     }
 
-    private void demoExceptionWithCause(Logger logger) {
+    private void demoExceptionWithCause() {
+        banner("logging of exception with cause");
         try {
-            logger.warn(banner("logging of exception with cause"));
             throwsWithCause();
         } catch (Exception e) {
             logger.info("demo of exception of cause.", e);
         }
     }
 
-    private void demoExceptionLostStack(Logger logger) {
-        logger.warn(banner("logging showing lost stack trace"));
+    private void demoExceptionLostStack() {
+        banner("logging showing lost stack trace");
         try {
             throwsWithoutCause();
         } catch (Exception e) {
@@ -67,8 +72,8 @@ public class App {
         }
     }
 
-    private void demoReplacingStack(Logger logger) {
-        logger.warn(banner("logging after replacing stack trace"));
+    private void demoReplacingStack() {
+        banner("logging after replacing stack trace");
         try {
             throwsWithOldStack();
         } catch (Exception e) {
@@ -80,7 +85,7 @@ public class App {
         throw new NullPointerException("simple null pointer exception");
     }
     
-    private void throwsAfterLogging(Logger logger) throws Exception {
+    private void throwsAfterLogging() throws Exception {
         try {
             throwsException();
         } catch (Exception e) {
