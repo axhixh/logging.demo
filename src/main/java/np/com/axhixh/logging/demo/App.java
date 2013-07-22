@@ -30,6 +30,7 @@ public class App {
         demoExceptionLostStack();
         demoExceptionWithCause();
         demoReplacingStack();
+        demoTryWithResourcesSuppression();
     }
 
     private void banner(String message) {
@@ -81,6 +82,22 @@ public class App {
         } 
     }
 
+    private void demoTryWithResourcesSuppression() {
+        banner("printed suppressed exceptions from try-with-resources");
+        try (
+                SomeResource r1 = new SomeResource();
+                SomeResource r2 = new SomeResource();
+        ){
+            r1.doSomething();
+            r2.doSomething();
+        } catch (Exception e) {
+            logger.info("exception from using resource",e);
+            for (Throwable fromClosing : e.getSuppressed()) {
+                logger.info("exception from closing resource",fromClosing);
+            }
+        }
+    }
+
     private void throwsException() throws Exception {
         throw new NullPointerException("simple null pointer exception");
     }
@@ -115,6 +132,17 @@ public class App {
             Exception e2 = new IllegalArgumentException("new exception with old stack");
             e2.setStackTrace(e.getStackTrace());
             throw e2;
+        }
+    }
+
+    private static class SomeResource implements AutoCloseable {
+        public void doSomething() throws Exception {
+            throw new Exception("exception thrown while doing something");
+        }
+
+        @Override
+        public void close() throws Exception {
+            throw new Exception("exception thrown while closing");
         }
     }
 }
