@@ -88,3 +88,5 @@ log long and still keeping the original location of the exception. The
 disadvantage is that the original exception is lost. In the example, the original 
 exception was a NullPointerException. We lost that information, but the stack 
 hasn't increased and the original exception location of line 85 is retained.
+
+## demoTryResourcesSuppression()
